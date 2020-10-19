@@ -1,0 +1,6 @@
+#!/usr/local/bin/ruby
+
+require_relative '../environment.rb'
+
+cli = CLI.new
+
