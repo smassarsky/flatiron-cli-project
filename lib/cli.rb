@@ -2,48 +2,70 @@ class CLI
 
   attr_reader :fetcher
 
+  OPTIONS = ["All Teams",
+             "Teams by Conference",
+             "Teams by Division",
+             "Players by Team",
+             "All Players",
+             "Exit"]
+
   def initialize
-    make_fetcher
-    fetch_teams
-    menu_input_loop
-    binding.pry
-    puts "Thank you for visiting!"
-  end
-
-  def make_fetcher
-    @fetcher = Fetcher.new
-  end
-
-  def fetch_teams
-    @fetcher.fetch_teams
-  end
-
-  def menu_input_loop
-    input = nil
-    while input != "exit"
-      show_teams_menu
-      input = gets.chomp
-      if input.to_i != 0
-        index = input.to_i
-        index > 0 && index <= Team.all.length ? Team.all[index - 1] : "Invalid"
-        binding.pry
-      else
-        Team.all.find{|team| team.full_team_name.downcase == input.downcase}
-        binding.pry
-      end
+    Fetcher.fetch_teams
+    while true
+      show_options
+      go_to_selection(get_input)
     end
   end
 
-  def show_teams_menu
+  def get_input
+    input = gets.chomp.downcase
+    while select_valid_option(input) == nil
+      puts "invalid"
+      input = gets.chomp.downcase
+    end
+    input = select_valid_option(input)
+  end
+
+  def select_valid_option(input)
+    if input.to_i < 1
+      OPTIONS.find_index{|option| input == option.downcase}
+    elsif OPTIONS[input.to_i - 1]
+      input.to_i - 1
+    else
+      nil
+    end
+  end
+
+  def show_options
     puts "Welcome to the CLI NHL Team & Player stats application! (I'm great at names!)"
-    puts "Please pick a team from the following list(index or name):"
-    Team.all.each_with_index{|team, index| puts "#{index + 1}. #{team.full_team_name}"}
+    puts "What would you like to view?"
+    OPTIONS.each_with_index {|option, index| puts "#{index + 1}. #{option}"}
     nil
   end
 
-  # def pick_team
-  #   input = nil
-  #   until input == "exit" || Team.all.find(|team| team.full_team_name.downcase == input) ||
-  # end
+  def go_to_selection(selection)
+    case selection
+    when 0
+      puts "TODO - Go to all teams"
+      Team.all_teams_menu
+    when 1
+      puts "TODO - Go to Teams by Conference"
+      Team.team_by_conference_menu
+    when 2
+      puts "TODO - Go to Teams by Division"
+      Team.team_by_division_menu
+    when 3
+      puts "TODO - Go to Players by Team"
+    when 4
+      puts "TODO - Go to All Players"
+    when 5
+      self.class.exit_program
+    end
+  end
+
+  def self.exit_program
+    puts "Thank you for visiting!!"
+    exit
+  end
 
 end
