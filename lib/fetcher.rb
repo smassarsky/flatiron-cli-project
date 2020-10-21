@@ -7,7 +7,7 @@ class Fetcher
     response = Net::HTTP.get_response(uri)
     teams_hash = JSON.parse(response.body)
     teams_hash["teams"].each do |team_hash|
-      Team.find_or_create_by_name(team_hash)
+      Team.find_or_create_by_hash(team_hash)
     end
   end
 
@@ -25,6 +25,18 @@ class Fetcher
     uri = URI.parse(BASE_URL + "people/#{player.api_id}/")
     response = Net::HTTP.get_response(uri)
     player.update_extra_details(JSON.parse(response.body)["people"][0])
+  end
+
+  def self.fetch_player_stats_current_season(player)
+    puts "TODO"
+  end
+
+  def self.fetch_player_stats_by_season(player)
+    puts "TODO"
+  end
+
+  def self.fetch_player_stats_all(player)
+    puts "TODO"
   end
   
 end

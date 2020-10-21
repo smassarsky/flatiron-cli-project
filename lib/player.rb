@@ -18,11 +18,9 @@ class Player
     self.class.all << self
   end
 
-  def player_info
-    if !@extra_details_fetch
-      Fetcher.fetch_extra_player_info(self)
-    end
-    puts "***************************************"
+  def display_player_info
+    Fetcher.fetch_extra_player_info(self) if !@extra_details_fetch
+    puts "\n***************************************"
     puts "Player Name: #{'(C) ' if @captain}#{'(A) ' if @alternate_captain}#{full_name}"
     puts "Position: #{@position}"
     puts "Jersey Number: #{@jersey_number}"
@@ -32,6 +30,7 @@ class Player
     puts "Height: #{@height}"
     puts "Weight: #{@weight}"
     puts "Shoots: #{@shoots == 'L' ? 'Left Handed' : 'Right Handed'}"
+    puts "***************************************\n\n"
   end
 
   def update_extra_details(details_hash)
@@ -55,51 +54,7 @@ class Player
   end
 
   def self.players_by_team(team)
-    puts "#{team.full_team_name} roster:"
-    roster = all.select{|player| player.team == team}
-    roster = roster.sort_by{|player| player.position_abbreviation}
-    roster.each_with_index{|player, index| puts "#{player.position_abbreviation} - #{player.jersey_number} -  #{player.full_name}"}
-    puts "Select jersey number or name for more information, or 'back' / 'exit'."
-    while true
-      selection = get_input(roster)
-      break if go_to_selection(selection) == "break"
-    end
-    binding.pry
-  end
-
-  def self.all_players_menu
-    puts "TODO"
-  end
-
-  def self.get_input(roster)
-    input = gets.chomp.downcase
-    while select_valid_option(input, roster) == nil
-      puts "invalid"
-      input = gets.chomp.downcase
-    end
-    select_valid_option(input, roster)
-  end
-
-  def self.select_valid_option(input, roster)
-    if input == "back" || input == "exit"
-      input
-    elsif input == ""
-      nil
-    elsif input.to_i < 1
-      roster.find{|player| player.full_name == input}.jersey_number
-    else
-      roster.find{|player| player.jersey_number == input}
-    end
-  end
-
-  def self.go_to_selection(selection)
-    if selection == "exit"
-      CLI.exit_program
-    elsif selection == "back"
-      "break"
-    else
-      selection.player_info
-    end
+    all.select{|player| player.team == team}
   end
 
   def full_name
