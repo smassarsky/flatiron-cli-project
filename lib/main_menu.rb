@@ -79,8 +79,7 @@ class Main_Menu < Menu
   end
 
   def go_to_all_players
-    puts "TODO - Go to all players"
-    puts "\nAre you sure?  This will take a while...\n\n"
+    puts "\nAre you sure?  This will take a while... ('y' or 'yes' to continue)\n\n"
     input = gets.chomp.downcase
     if input == 'y' || input == "yes"
       Team.check_all_fetched_players

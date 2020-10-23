@@ -28,15 +28,61 @@ class Fetcher
   end
 
   def self.fetch_player_stats_current_season(player)
-    puts "TODO"
+    uri = URI.parse(BASE_URL + "people/#{player.api_id}/?expand=person.stats&stats=statsSingleSeason")
+    response = Net::HTTP.get_response(uri)
+    JSON.parse(response.body)["people"][0]["stats"][0]["splits"][0]["stat"]
   end
 
-  def self.fetch_player_stats_by_season(player)
-    puts "TODO"
+  def self.fetch_player_stats_by_season(player, season)
+    uri = URI.parse(BASE_URL + "people/#{player.api_id}/?expand=person.stats&stats=statsSingleSeason&season=" + season)
+    response = Net::HTTP.get_response(uri)
+    hash = JSON.parse(response.body)
+    if hash["people"][0]["stats"][0]["splits"] != []
+      hash["people"][0]["stats"][0]["splits"][0]["stat"]
+    else
+      "invalid"
+    end
   end
 
-  def self.fetch_player_stats_all(player)
-    puts "TODO"
+  def self.fetch_player_all_seasons_stats_all(player)
+    uri = URI.parse(BASE_URL + "people/#{player.api_id}/?expand=person.stats&stats=yearByYear")
+    response = Net::HTTP.get_response(uri)
+    JSON.parse(response.body)["people"][0]["stats"][0]["splits"].select{|x| x["league"]["name"] == "National Hockey League"}
+  end
+
+  def self.fetch_career_stats(player)
+    uri = URI.parse(BASE_URL + "people/#{player.api_id}/?expand=person.stats&stats=careerRegularSeason")
+    response = Net::HTTP.get_response(uri)
+    JSON.parse(response.body)["people"][0]["stats"][0]["splits"][0]["stat"]
+  end
+
+  def self.fetch_team_current_season_stats(team)
+    uri = URI.parse(BASE_URL + "teams/#{team.api_id}/stats")
+    response = Net::HTTP.get_response(uri)
+    JSON.parse(response.body)["stats"][0]["splits"][0]["stat"]
+  end
+
+  def self.fetch_team_season_stats_by_season(team, season)
+    uri = URI.parse(BASE_URL + "teams/#{team.api_id}/stats?season=" + season)
+    response = Net::HTTP.get_response(uri)
+    hash = JSON.parse(response.body)
+    if hash["stats"][0]["splits"] != []
+      hash["stats"][0]["splits"][0]["stat"]
+    else
+      "invalid"
+    end
+  end
+
+  def self.fetch_team_all_seasons_stats(team)
+    stats_hash = {}
+    year = team.first_year_of_play.to_i
+    while year <= Time.now.year
+      season = "#{year}#{year + 1}"
+      temp = fetch_team_season_stats_by_season(team, season)
+      stats_hash[season] = temp if temp != "invalid"
+      year += 1
+    end
+    stats_hash
   end
   
 end

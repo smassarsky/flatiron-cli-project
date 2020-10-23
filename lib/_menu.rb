@@ -26,4 +26,14 @@ class Menu
     end
   end
 
+  def get_valid_season
+    while true
+      input = get_input
+      if input.length == 8 && input.to_i > 0
+        break
+      end
+    end
+    input
+  end
+
 end
