@@ -2,5 +2,5 @@
 
 require_relative '../environment.rb'
 
-cli = CLI.new
+CLI.new
 

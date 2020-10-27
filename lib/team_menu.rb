@@ -3,9 +3,9 @@ class Team_Menu < Menu
   def initialize(team)
     @team = team
     @options = ["Show Roster",
-                "Current Season Stats(TODO)",
-                "Season Stats by Season(TODO)",
-                "All Seasons Stats(TODO)",
+                "Current Season Stats",
+                "Season Stats by Season",
+                "All Seasons Stats",
                 "Back",
                 "Exit"]
     while true

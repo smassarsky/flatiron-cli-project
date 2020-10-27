@@ -1,7 +1,7 @@
 class Player_Menu < Menu
 
   def initialize(player)
-    @options = ["Current Season Stats", "Stats by Season", "All Seasons Stats(TODO)", "Career Stats", "Back", "Exit"]
+    @options = ["Current Season Stats", "Stats by Season", "All Seasons Stats", "Career Stats", "Back", "Exit"]
     @player = player
     while true
       @player.display_player_info
