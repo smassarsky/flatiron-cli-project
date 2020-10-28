@@ -4,14 +4,10 @@ class Teams_Menu < Menu
     @options = teams.map{|team| team.full_team_name} + ["Back", "Exit"]
     @teams = teams
     while true
-      puts "\nTeams" + (div_conf == nil ? ":\n" : " in #{div_conf}:\n\n")
+      puts "\nAll Teams" + (div_conf == nil ? ":\n\n" : " in #{div_conf}:\n\n")
       show_options(@options)
       puts "\nSelect Team Name or Index for more information, or 'Back' / 'Exit'\n\n"
-
-      selection = nil
-      while selection == nil
-        selection = is_valid?(get_input, @options)
-      end
+      selection = get_valid_input(@options)
       break if go_to_selection(selection) == "break"
     end
   end

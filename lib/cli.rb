@@ -7,7 +7,7 @@ class CLI
   end
 
   def self.exit_program
-    puts "\nThank you for visiting!!\n\n"
+    puts "Thank you for visiting!!\n\n"
     exit
   end
 

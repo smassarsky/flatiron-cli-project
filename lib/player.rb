@@ -2,7 +2,7 @@ class Player
 
   @@all = []
 
-  attr_accessor :api_id, :api_link, :first_name, :last_name, :jersey_number, :position, :position_abbreviation, :position_type, :team, :nationality, :birth_date, :height, :weight, :captain, :alternate_captain, :shoots
+  attr_accessor :api_id, :api_link, :first_name, :last_name, :jersey_number, :position, :position_abbreviation, :position_type, :team, :nationality, :birth_date, :height, :weight, :captain, :alternate_captain, :shoots, :extra_details_fetch
 
   def initialize(player_hash, team)
     @api_id = player_hash["person"]["id"]
@@ -20,7 +20,7 @@ class Player
 
   def display_player_info
     Fetcher.fetch_extra_player_info(self) if !@extra_details_fetch
-    puts "\n***************************************"
+    puts "***************************************"
     puts "Player Name: #{'(C) ' if @captain}#{'(A) ' if @alternate_captain}#{full_name}"
     puts "Position: #{@position}"
     puts "Jersey Number: #{@jersey_number}"

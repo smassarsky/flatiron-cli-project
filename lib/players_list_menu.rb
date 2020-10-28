@@ -6,18 +6,14 @@ class Players_List_Menu < Menu
 
     while true
       puts "\n#{team.full_team_name} roster:\n\n" if team != nil
-      puts "   Player - Position - Jersey Number"
+      puts "\n   Player - Position - Jersey Number"
       show_options(@options)
-      puts "\nSelect Player Name or Index for more information, or 'Back' / 'Exit'"
-
-      selection = nil
-      while selection == nil
-        selection = is_valid?(get_input, @players_list.map{|player |player.full_name} + ["Back", "Exit"])
-      end
+      puts "\nSelect Player Name or Index for more information, or 'Back' / 'Exit'\n\n"
+      selection = get_valid_input(@players_list.map{|player| player.full_name} + ["Back", "Exit"])
       break if go_to_selection(selection) == "break"
-
     end
   end
+
   def go_to_selection(selection)
     if selection == @options.length - 1
       CLI.exit_program

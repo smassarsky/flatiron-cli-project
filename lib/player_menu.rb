@@ -1,15 +1,12 @@
 class Player_Menu < Menu
 
+  OPTIONS = ["Current Season Stats", "Stats by Season", "All Seasons Stats", "Career Stats", "Back", "Exit"]
+
   def initialize(player)
-    @options = ["Current Season Stats", "Stats by Season", "All Seasons Stats", "Career Stats", "Back", "Exit"]
     @player = player
     while true
       @player.display_player_info
-      show_options(@options)
-      selection = nil
-      while selection == nil
-        selection = is_valid?(get_input, @options)
-      end
+      selection = show_options_and_get_valid_input(OPTIONS)
       break if go_to_selection(selection) == "break"
     end
   end
@@ -35,35 +32,22 @@ class Player_Menu < Menu
     stats_hash = Fetcher.fetch_player_stats_current_season(@player)
     stats_list = stats_hash_to_list(stats_hash)
     Stats_Printer.player_individual_season(stats_list, @player.full_name, "Current")
-    puts "\nDisplay extended stats? ('y' or 'yes')"
-    input = get_input
-    if input == "y" || input == "yes"
-      Stats_Printer.extended_player_season_stats(stats_hash)
-      puts "\nAny input to go back."
-      gets
-    end
+    display_extended_stats?(stats_hash)
   end
 
   def go_to_stats_by_season
     while true
-      puts "Please input a season (example format '20192020'):"
       season = get_valid_season
+      break if season == nil
       stats_hash = Fetcher.fetch_player_stats_by_season(@player, season)
       if stats_hash != "invalid"
         stats_list = stats_hash_to_list(stats_hash)
         Stats_Printer.player_individual_season(stats_list, @player.full_name, "#{season[0..3]} - #{season[4..7]}")
-        puts "\nDisplay extended stats? ('y' or 'yes')"
-        input = get_input
-        if input == "y" || input == "yes"
-          Stats_Printer.extended_player_season_stats(stats_hash)
-          puts "\nAny input to go back."
-          gets
-        end
+        display_extended_stats?(stats_hash)
         break
       else
         puts "\nInvalid season input\n\n"
-        show_options(["Try Again", "Back"])
-        break if is_valid?(get_input, ["Try Again", "Back"]) == 1
+        break if try_again_or_go_back == 1
       end
     end
   end
@@ -72,21 +56,14 @@ class Player_Menu < Menu
     stats_list = Fetcher.fetch_player_all_seasons_stats_all(@player)
     stats_list = stats_list.reverse.map{ |set| [set["season"], set["team"]["name"]] + stats_hash_to_list(set["stat"]) }
     Stats_Printer.player_multiple_season(stats_list, @player.full_name)
-    puts "\nAny input to go back."
-    gets
+    any_input_to_go_back
   end
 
   def go_to_career_stats
     stats_hash = Fetcher.fetch_career_stats(@player)
     stats_list = stats_hash_to_list(stats_hash)
     Stats_Printer.player_individual_season(stats_list, @player.full_name, "Career")
-    puts "\nDisplay extended stats? ('y' or 'yes')"
-    input = get_input
-    if input == "y" || input == "yes"
-      Stats_Printer.extended_player_season_stats(stats_hash)
-      puts "\nAny input to go back."
-      gets
-    end
+    display_extended_stats?(stats_hash)
   end
 
   def stats_hash_to_list(s_h)

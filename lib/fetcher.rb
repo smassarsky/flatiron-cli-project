@@ -25,6 +25,7 @@ class Fetcher
     uri = URI.parse(BASE_URL + "people/#{player.api_id}/")
     response = Net::HTTP.get_response(uri)
     player.update_extra_details(JSON.parse(response.body)["people"][0])
+    player.extra_details_fetch = true
   end
 
   def self.fetch_player_stats_current_season(player)

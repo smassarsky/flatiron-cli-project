@@ -1,50 +1,66 @@
 class Stats_Printer
 
   def self.player_individual_season(stats, name, season)
-    puts "\n#{name} #{season} Season Stats\n\n"
-    puts "| Games | +/- | Goals | Assists | Points | Hits | Faceoff % | Time on Ice |"
-    puts "|-------|-----|-------|---------|--------|------|-----------|-------------|"
-    columns = [7, 5, 7, 9, 8, 6, 11, 13]
-    stats_str = "|"
-    stats.each_with_index{ |stat, index| stats_str << stat.center(columns[index]) + "|" }
-    puts stats_str
+    headers = ["Games", "+/-", "Goals", "Assists", "Points", "Hits", "Faceoff %", "Time on Ice"]
+    widths = set_column_widths([headers, stats])
+    puts "#{name} #{season} Season Stats\n\n"
+    general_printer(widths, headers, [stats])
   end
 
   def self.player_multiple_season(all_stats, name)
-    puts "\n#{name} All NHL Seasons Stats\n\n"
-    columns = [10, all_stats.map{|season| season[1].length}.max + 2, 7, 5, 7, 9, 8, 6, 11, 13]
-    puts "|  Season  |" + "Team".center(columns[1]) + "| Games | +/- | Goals | Assists | Points | Hits | Faceoff % | Time on Ice |"
-    puts "|----------|"+ "-".center(columns[1], "-") + "|-------|-----|-------|---------|--------|------|-----------|-------------|"
-    all_stats.each do |stats|
-      stats_str = "|"
-      stats.each_with_index{ |stat, index| stats_str << stat.center(columns[index]) + "|" }
-      puts stats_str
-    end
+    headers = ["Season", "Team", "Games", "+/-", "Goals", "Assists", "Points", "Hits", "Faceoff %", "Time on Ice"]
+    widths = set_column_widths([headers] + all_stats)
+    puts "#{name} All NHL Seasons Stats\n\n"
+    general_printer(widths, headers, all_stats)
   end
   
-  def self.extended_player_season_stats(stats_hash)
+  def self.team_single_season(stats, team_name, season)
+    headers = ["Games Played", "Wins", "Losses", "OT Losses", "Points"]
+    widths = set_column_widths([headers, stats])
+    puts "#{team_name} #{season} Season Stats\n\n"
+    general_printer(widths, headers, [stats])
+  end
+
+  def self.team_all_seasons_stats(all_stats, team_name)
+    headers = ["Season", "Games Played", "Wins", "Losses", "OT Losses", "Points"]
+    totals = ["All Time"]
+    5.times{ |x| totals << all_stats.map{ |season| season[x + 1].to_i }.sum.to_s }
+    widths = set_column_widths([headers, totals] + all_stats)
+    puts "#{team_name} All Seasons Stats\n\n"
+    general_printer(widths, headers, all_stats, totals)
+  end
+
+  def self.extended_season_stats(stats_hash)
     puts
     stats_hash.each{|key, value| puts key.split(/(?=[A-Z])/).map{|x| x.capitalize}.join(" ") + " : #{value}"}
   end
 
-  def self.team_single_season(stats, team_name, season)
-    puts "\n#{team_name} #{season} Season Stats\n\n"
-    puts "| Games Played | Wins | Losses | OT Losses | Points |"
-    columns = [14, 6, 8, 11, 8]
-    stats_str = "|"
-    stats.each_with_index{ |stat, index| stats_str << stat.center(columns[index]) + "|" }
-    puts stats_str
+  def self.general_printer(widths, headers, stats, totals = nil)
+    row_printer(widths, headers)
+    spacer_printer(widths)
+    stats.each {|stats| row_printer(widths, stats)}
+    if totals != nil
+      spacer_printer(widths)
+      row_printer(widths, totals)
+    end
   end
 
-  def self.team_all_seasons_stats(all_stats, team_name)
-    puts "\n#{team_name} All Seasons Stats\n\n"
-    puts "|  Season  | Games Played | Wins | Losses | OT Losses | Points |"
-    columns = [10, 14, 6, 8, 11, 8]
-    all_stats.each do |stats|
-      stats_str = "|"
-      stats.each_with_index{ |stat, index| stats_str << stat.center(columns[index]) + "|" }
-      puts stats_str
-    end
+  def self.set_column_widths(data)
+    widths = []
+    data[0].length.times{|x| widths << data.map{|row| row[x].length}.max + 2}
+    widths
+  end
+
+  def self.row_printer(widths, stats)
+    stats_str = "|"
+    stats.each_with_index{ |stat, index| stats_str << stat.center(widths[index]) + "|" }
+    puts stats_str
+  end
+  
+  def self.spacer_printer(widths)
+    spacer_str = "|"
+    widths.each{|x| spacer_str << "-".center(x, "-") + "|" }
+    puts spacer_str
   end
 
 end

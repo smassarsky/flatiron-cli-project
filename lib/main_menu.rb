@@ -10,11 +10,7 @@ class Main_Menu < Menu
   def initialize
     while true
       intro_text
-      show_options(OPTIONS)
-      selection = nil
-      while selection == nil
-        selection = is_valid?(get_input, OPTIONS)
-      end
+      selection = show_options_and_get_valid_input(OPTIONS)
       go_to_selection(selection)
     end
   end
@@ -46,11 +42,8 @@ class Main_Menu < Menu
 
   def go_to_teams_by_conference
     puts "\nConferences:\n\n"
-    show_options(Team.conferences << "Back")
-    conference_selection = nil
-    while conference_selection == nil
-      conference_selection = is_valid?(get_input, Team.conferences + ["Back"])
-    end
+    options = Team.conferences << "Back"
+    conference_selection = show_options_and_get_valid_input(options)
     conference = Team.conferences[conference_selection]
     Teams_Menu.new(Team.teams_in_conference(conference), "#{conference} Conference") if conference_selection != Team.conferences.length
   end
@@ -58,11 +51,7 @@ class Main_Menu < Menu
   def go_to_teams_by_division
     puts "\nDivisions:\n\n"
     options = Team.divisions << "Back"
-    show_options(options)
-    division_selection = nil
-    while division_selection == nil
-      division_selection = is_valid?(get_input, Team.divisions + ["Back"])
-    end
+    division_selection = show_options_and_get_valid_input(options)
     division = Team.divisions[division_selection]
     Teams_Menu.new(Team.teams_in_division(division), "#{division} Division") if division_selection != Team.divisions.length
   end
@@ -70,11 +59,7 @@ class Main_Menu < Menu
   def go_to_team_roster
     puts "\nPlease select a team to view their roster:\n\n"
     options = Team.all_team_names << "Back"
-    show_options(options)
-    team_selection = nil
-    while team_selection == nil
-      team_selection = is_valid?(get_input, options)
-    end
+    team_selection = show_options_and_get_valid_input(options)
     Team.find_by_name(options[team_selection]).show_roster if team_selection != options.length - 1
   end
 

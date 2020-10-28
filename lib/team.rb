@@ -37,7 +37,7 @@ class Team
   end
 
   def team_details
-    puts "\n***************************************"
+    puts "***************************************"
     puts "Team Name: #{full_team_name}"
     puts "Abbreviation: #{@abbreviation}"
     puts "Conference: #{@conference}"
